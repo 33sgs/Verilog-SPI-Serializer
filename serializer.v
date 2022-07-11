@@ -1,12 +1,12 @@
 module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready);
-	input wire i_Clock;
-	input wire i_Data_Ready;
-	input wire [31:0] i_Data;
+	input wire i_Clock; // Main input clock, serial clock will be half the frequency of this clock
+	input wire i_Data_Ready; // Input that tells module to read data
+	input wire [31:0] i_Data; // Parallel data input lines
 	
 	output reg o_CS; // Active low chip select
 	output reg o_MOSI; // Master data out
 	output reg o_SCLK; // Idle low clock
-	output reg o_Ready; 
+	output reg o_Ready; // Serializer uses this to signal that it is ready for more data
 	
 	reg [31:0] r_Data;
 	reg [4:0] r_Data_Index;
