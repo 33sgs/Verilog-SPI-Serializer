@@ -27,56 +27,55 @@ module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready)
 	end
 	
 	always @(posedge i_Clock)
+	begin
+		r_Div <= r_Div + 1'b1;
+		if(r_Div == 3)
 		begin
-			r_Div <= r_Div + 1'b1;
-			if(r_Div == 3)
+			if(o_Ready && i_Data_Ready)
 			begin
-				if(o_Ready && i_Data_Ready)
+				r_Data <= i_Data;
+				r_State <= 2'b00;
+				o_Ready <= 1'b0;
+				o_CS <= 1'b0;
+			end
+			else if (!o_Ready)
+			begin
+				if(r_State == 0)
+				begin
+					o_MOSI <= r_Data[0];
+					r_State <= 1;
+				end
+				else if(r_State == 1)
+				begin
+					o_SCLK <= ~o_SCLK;
+					if(o_SCLK)
 					begin
-						r_Data <= i_Data;
-						r_State <= 2'b00;
-						o_Ready <= 1'b0;
-						o_CS <= 1'b0;
-					end
-				else if (!o_Ready)
-					begin
-						if(r_State == 0)
-							begin
-								o_MOSI <= r_Data[0];
-								r_State <= 1;
-							end
-						else if(r_State == 1)
-							begin
-								o_SCLK <= ~o_SCLK;
-								if(o_SCLK)
-									begin
-										o_MOSI <= r_Data[r_Data_Index];
-										
-										if(r_Data_Index < (DATA_SIZE-1))
-											begin
-												r_Data_Index <= r_Data_Index + 1;
-											end
-										else
-											begin
-												r_State <= 2;
-											end
-									end
-							end
-						else if(r_State == 2)
-							begin
-								o_SCLK <= ~o_SCLK;
-								r_State <= 3;
-							end
-						else if(r_State == 3)
-							begin
-								r_State <= 0;
-								o_SCLK <= 1'b0;
-								o_CS <= 1'b1;
-								o_MOSI <= 1'b0;
-								r_Data_Index <= 5'b00001;
-								o_Ready <= 1'b1;
-							end
+						o_MOSI <= r_Data[r_Data_Index];
+						if(r_Data_Index < (DATA_SIZE-1))
+						begin
+							r_Data_Index <= r_Data_Index + 1;
+						end
+						else
+						begin
+							r_State <= 2;
+						end
 					end
 				end
+				else if(r_State == 2)
+				begin
+					o_SCLK <= ~o_SCLK;
+					r_State <= 3;
+				end
+				else if(r_State == 3)
+				begin
+					r_State <= 0;
+					o_SCLK <= 1'b0;
+					o_CS <= 1'b1;
+					o_MOSI <= 1'b0;
+					r_Data_Index <= 5'b00001;
+					o_Ready <= 1'b1;
+				end
+			end
 		end
+	end
 endmodule
