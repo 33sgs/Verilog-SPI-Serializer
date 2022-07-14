@@ -1,5 +1,5 @@
 module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready);
-	parameter 	DATA_SIZE = 32, // Must be a power of 2
+	parameter	DATA_SIZE = 32, // Must be a power of 2
 				DIVIDE_CLOCK = 1, // 0 will not divide clock further
 				DIVIDE_BY = 4; // Must be a power of 2
 				
