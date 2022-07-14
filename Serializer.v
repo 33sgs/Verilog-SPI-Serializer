@@ -1,6 +1,8 @@
 module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready);
-	parameter DATA_SIZE = 32; // Must be a power of 2
-	
+	parameter 	DATA_SIZE = 32, // Must be a power of 2
+				DIVIDE_CLOCK = 1, // 0 will not divide clock further
+				DIVIDE_BY = 4; // Must be a power of 2
+				
 	input wire i_Clock; // Main input clock, serial clock will be half the frequency of this clock
 	input wire i_Data_Ready; // Input that tells module to read data
 	input wire [DATA_SIZE-1:0] i_Data; // Parallel data input lines
@@ -13,6 +15,7 @@ module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready)
 	reg [DATA_SIZE-1:0] r_Data;
 	reg [$clog2(DATA_SIZE)-1:0] r_Data_Index;
 	reg [1:0] r_State;
+	reg [$clog2(DIVIDE_BY)-1:0] r_Div;
 	
 	initial
 	begin
@@ -27,6 +30,9 @@ module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready)
 	
 	always @(posedge i_Clock)
 	begin
+		r_Div <= r_Div + 1'b1;
+		if((r_Div == (DIVIDE_BY-1)) || DIVIDE_CLOCK)
+		begin
 			if(o_Ready && i_Data_Ready)
 			begin
 				r_Data <= i_Data;
@@ -72,5 +78,6 @@ module serializer (i_Clock, i_Data_Ready, i_Data, o_CS, o_MOSI, o_SCLK, o_Ready)
 					o_Ready <= 1'b1;
 				end
 			end
+		end
 	end
 endmodule
