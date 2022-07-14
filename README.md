@@ -21,7 +21,7 @@ A basic SPI style serializer implemented in Verilog
 
 ### Parameters
 *DATA_SIZE*: The size of data to serialize per transaction. This affects how wide *i_Data* is along with the size of some internal registers.
-*DIVIDE_BY*: This deterimes what to divide the serial clock by. It must be a power of 2. If **DIVIDE_CLOCK** is not defined, this does nothing.
+*DIVIDE_BY*: This deterimes what to divide the serial clock by. It must be a power of 2. If ***DIVIDE_CLOCK*** is not defined, this does nothing.
 
 ### Define Statements
-**DIVIDE_CLOCK**: Determines whether the serial clock will be divided by. If no additional division is required, comment out the define statement.
+***DIVIDE_CLOCK***: Determines whether the serial clock will be divided by. If no additional division is required, comment out the define statement.
